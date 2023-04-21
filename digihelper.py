@@ -64,6 +64,7 @@ with sheets_tab:
     import gspread
     from oauth2client.service_account import ServiceAccountCredentials
     import json
+    import toml
 
     # Get the Google Sheet credentials from the secrets
     creds_toml = st.secrets["GOOGLE_SHEET_CREDENTIALS"]
