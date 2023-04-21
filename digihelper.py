@@ -7,7 +7,7 @@ def lower(text):
 
 df = pd.read_csv("cardlist.csv", encoding= 'unicode_escape')
 
-id_check_tab, advanced_tab = st.tabs(["ID", "Advanced"])
+id_check_tab, advanced_tab, sheets_tab = st.tabs(["ID", "Advanced","Sheets"])
 
 
 with id_check_tab:
@@ -58,6 +58,32 @@ with advanced_tab:
     
     selected_df=df[(df["Card Name"].isin(search_names)) & (df["Type"].isin(search_types)) & (df["Level"].isin(search_level)) ]
     st.write(selected_df)
+
+with sheets_tab:
+    import streamlit as st
+    import gspread
+    from oauth2client.service_account import ServiceAccountCredentials
+    import json
+
+    # Get the Google Sheet credentials from the secrets
+    creds_toml = st.secrets["GOOGLE_SHEET_CREDENTIALS"]
+    creds_dict = toml.loads(creds_toml)["google_sheet_credentials"]
+
+    # Set up the credentials for authentication
+    scope = ['https://www.googleapis.com/auth/drive']
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+
+    # Open the Google Sheet by name
+    sheet = client.open('cardlist').sheet1
+
+    # Get all the values from the sheet
+    data = sheet.get_all_values()
+
+    # Print the data
+    for row in data:
+        st.write(row)
+
 
 
 if st.checkbox("Show All Cards"):
